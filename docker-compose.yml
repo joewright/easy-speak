@@ -1,0 +1,22 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:10-alpine
+    environment:
+      POSTGRES_USER: lol
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: easyspeak
+    ports:
+      - 5432:5432
+  console: 
+    build: .
+    command: tail -f /dev/null
+    volumes: 
+      - ./:/usr/src/app
+    depends_on:
+      - postgres
+    ports:
+      - 6633:6633
+    environment:
+      PGURI: postgresql://lol:password@postgres:5432/easyspeak
+      PORT: 6633
