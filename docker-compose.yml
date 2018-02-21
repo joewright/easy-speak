@@ -18,5 +18,5 @@ services:
     ports:
       - 6633:6633
     environment:
-      PGURI: postgresql://lol:password@postgres:5432/easyspeak
+      DATABASE_URL: postgresql://lol:password@postgres:5432/easyspeak
       PORT: 6633

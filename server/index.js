@@ -45,7 +45,7 @@ function run() {
 }
 
 function getPGClient() {
-	const client = new Client(process.env.PGURI);
+	const client = new Client(process.env.DATABASE_URL);
 	// console.log('dip');
 	client.connect(function(err) {
 		if (err) throw err;
