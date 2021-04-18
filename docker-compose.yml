@@ -8,15 +8,3 @@ services:
       POSTGRES_DB: easyspeak
     ports:
       - 5432:5432
-  console: 
-    build: .
-    command: tail -f /dev/null
-    volumes: 
-      - ./:/usr/src/app
-    depends_on:
-      - postgres
-    ports:
-      - 6633:6633
-    environment:
-      DATABASE_URL: postgresql://lol:password@postgres:5432/easyspeak
-      PORT: 6633

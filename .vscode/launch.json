@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Run server",
+            "program": "${workspaceFolder}/server/index.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node",
+            "env": {
+                "DATABASE_URL": "postgresql://lol:password@postgres:5432/easyspeak",
+                "PORT": "3030"
+            }
+        }
+    ]
+}
