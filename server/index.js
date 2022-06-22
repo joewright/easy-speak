@@ -12,35 +12,34 @@ exports.run = run;
 run();
 
 function run() {
-	getPGClient(0, (err, pgClient) => {
-		startServer(pgClient);
-	});
+	startServer(pgClient);
+	// getPGClient(0, (err, pgClient) => {});
 }
 
 function startServer(pgClient) {
-	app.set('pgClient', pgClient);
+	// app.set('pgClient', pgClient);
 
 	app.use(express.static(path.join(__dirname, 'public')));
 	app.use(logger());
 	app.get('/phrases/:id', function(req, res) {
-		var queryText = 'SELECT * FROM clips WHERE id = $1';
-		app.get('pgClient').query(queryText, [req.params.id], function(err, result) {
-			if (err || !result || !result.rows[0]) {
-				return res.status(404).send({error: 'not found'});
-			}
-			return res.send(result.rows[0]);
-		});
+		return res.status(404).send({error: 'not found'});
+		// var queryText = 'SELECT * FROM clips WHERE id = $1';
+		// app.get('pgClient').query(queryText, [req.params.id], function(err, result) {
+		// 	if (err || !result || !result.rows[0]) {
+		// 	}
+		// 	return res.send(result.rows[0]);
+		// });
 	});
 
 	app.post('/save', bodyParser.json(), function(req, res) {
-		var insertTxt = 'INSERT INTO clips(content, voice) VALUES($1, $2) RETURNING *';
-		var values = [req.body.content, req.body.voice || ''];
-		app.get('pgClient').query(insertTxt, values, function(err, result) {
-			if (err) {
-				return res.status(422).send({errors: 'Failed to save, lol'});
-			}
-			res.send(result.rows[0]);
-		});
+		return res.status(422).send({errors: 'Failed to save, lol'});
+		// var insertTxt = 'INSERT INTO clips(content, voice) VALUES($1, $2) RETURNING *';
+		// var values = [req.body.content, req.body.voice || ''];
+		// app.get('pgClient').query(insertTxt, values, function(err, result) {
+		// 	if (err) {
+		// 	}
+		// 	res.send(result.rows[0]);
+		// });
 	});
 
 	app.listen(process.env.PORT, function() {
@@ -55,7 +54,6 @@ function startServer(pgClient) {
 
 function getPGClient(attempts, ready) {
 	const client = new Client(process.env.DATABASE_URL);
-	console.log(client);
 	client.connect((err) => {
 		if (err) {
 			if (attempts < pgConnectRetries) {
