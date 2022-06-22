@@ -7,6 +7,7 @@
     var inputTxt = document.getElementById('input');
     var voiceSelect = document.getElementById('select');
     var saveButton = document.getElementById('save');
+    var allVoices = document.getElementById('all-voices');
 
     var voices = synth.getVoices();
 
@@ -43,10 +44,25 @@
             option.setAttribute('data-lang', voices[i].lang);
             option.setAttribute('data-name', voices[i].name);
             voiceSelect.appendChild(option);
+
+            var button = document.createElement('button');
+            button.setAttribute('data-lang', voices[i].lang);
+            button.setAttribute('data-name', voices[i].name);
+            button.textContent = voices[i].name + ' (' + voices[i].lang + ')';
+            allVoices.appendChild(button);
         }
 
         inputForm.onsubmit = function(event) {
             event.preventDefault();
+
+            synth.cancel();
+            var buttonVal = event.submitter.attributes['data-name'];
+            if (buttonVal) {
+                selectOption(buttonVal.value);
+            }
+            if (event.submitter.attributes['data-stop']) {
+                return;
+            }
 
             var utterThis = new SpeechSynthesisUtterance(inputTxt.value);
             utterThis.voice = getVoice();
@@ -81,6 +97,16 @@
         });
     }
 
+    function selectOption(name) {
+        for (var x = 0; x < voiceSelect.childNodes.length; x++) {
+            let option = voiceSelect.childNodes[x];
+            option.selected = false;
+            if (option && option.getAttribute('data-name') === name) {
+                option.selected = 'selected';
+            }
+        }
+    }
+
     function loadMyThing(id) {
         httpRequest({
             method: 'GET',
@@ -98,13 +124,7 @@
                         selectedName = voices[i].name;
                     }
                 }
-                for (var x = 0; x < voiceSelect.childNodes.length; x++) {
-                    let option = voiceSelect.childNodes[x];
-                    option.selected = false;
-                    if (option && option.getAttribute('data-name') === selectedName) {
-                        option.selected = 'selected';
-                    }
-                }
+                selectedName && selectOption(selectedName);
             }
         });
     }

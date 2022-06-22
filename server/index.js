@@ -5,11 +5,20 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
+const pgConnectRetries = 4;
+const pgRetryIntervalMs = 5000;
 
 exports.run = run;
 run();
+
 function run() {
-	app.set('pgClient', getPGClient());
+	getPGClient(0, (err, pgClient) => {
+		startServer(pgClient);
+	});
+}
+
+function startServer(pgClient) {
+	app.set('pgClient', pgClient);
 
 	app.use(express.static(path.join(__dirname, 'public')));
 	app.use(logger());
@@ -44,15 +53,24 @@ function run() {
 	});
 }
 
-function getPGClient() {
+function getPGClient(attempts, ready) {
 	const client = new Client(process.env.DATABASE_URL);
 	// console.log('dip');
-	client.connect(function(err) {
-		if (err) throw err;
+	client.connect((err) => {
+		if (err) {
+			if (attempts < pgConnectRetries) {
+				attempts++;
+				console.error(`Failed to connect to PG after ${attempts} attempt(s). Retrying...`);
+				return setTimeout(() => {
+					getPGClient(attempts, ready);
+				}, pgRetryIntervalMs);
+			}
+			throw err;
+		}
 		console.log('postgresql: connected');
 		setupDB(client);
+		ready(err, client);
 	});
-	return client;
 }
 
 function setupDB(client) {
