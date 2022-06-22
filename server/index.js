@@ -12,11 +12,11 @@ exports.run = run;
 run();
 
 function run() {
-	startServer(pgClient);
+	startServer();
 	// getPGClient(0, (err, pgClient) => {});
 }
 
-function startServer(pgClient) {
+function startServer() {
 	// app.set('pgClient', pgClient);
 
 	app.use(express.static(path.join(__dirname, 'public')));
