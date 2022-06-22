@@ -1,4 +1,5 @@
 /* global require, process, console, __dirname, exports */
+console.log(process.env);
 'use strict';
 const {Client} = require('pg');
 const express = require('express');
