@@ -1,5 +1,4 @@
 /* global require, process, console, __dirname, exports */
-console.log(process.env);
 'use strict';
 const {Client} = require('pg');
 const express = require('express');
@@ -56,7 +55,7 @@ function startServer(pgClient) {
 
 function getPGClient(attempts, ready) {
 	const client = new Client(process.env.DATABASE_URL);
-	// console.log('dip');
+	console.log(client);
 	client.connect((err) => {
 		if (err) {
 			if (attempts < pgConnectRetries) {
